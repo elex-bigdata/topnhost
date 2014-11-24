@@ -91,7 +91,12 @@ public class RawDataCollector extends Configured implements Tool {
 					}
 					if ("ua".equals(Bytes.toString(kv.getFamily()))&& "url".equals(Bytes.toString(kv.getQualifier()))) {
 						url = Bytes.toString(kv.getValue());
-						host = new URL(url).getHost();
+						if(url.startsWith("http") || url.startsWith("https")){
+							host = new URL(url).getHost();
+						}else{
+							host = new URL("http://"+url).getHost();
+						}
+						
 					}
 				}
 				
