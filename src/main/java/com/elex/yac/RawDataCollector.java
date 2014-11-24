@@ -1,6 +1,7 @@
 package com.elex.yac;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,11 +92,16 @@ public class RawDataCollector extends Configured implements Tool {
 					}
 					if ("ua".equals(Bytes.toString(kv.getFamily()))&& "url".equals(Bytes.toString(kv.getQualifier()))) {
 						url = Bytes.toString(kv.getValue());
-						if(url.startsWith("http") || url.startsWith("https")){
-							host = new URL(url).getHost();
-						}else{
-							host = new URL("http://"+url).getHost();
+						try{
+							if(url.startsWith("http") || url.startsWith("https")){
+								host = new URL(url).getHost();
+							}else{
+								host = new URL("http://"+url).getHost();
+							}
+						}catch(MalformedURLException e){
+							System.err.println("MalformedURLException:"+url);
 						}
+						
 						
 					}
 				}
