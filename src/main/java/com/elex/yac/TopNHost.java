@@ -35,9 +35,9 @@ public class TopNHost extends Configured implements Tool {
 			System.err.println("请输入topn参数！！！");
 			System.exit(1);
 		}
-		
-		ToolRunner.run(new Configuration(), new TopNHost(), args);
+				
 		ToolRunner.run(new Configuration(), new RawDataCollector(), args);
+		ToolRunner.run(new Configuration(), new TopNHost(), args);
 	}
 
 	public int run(String[] args) throws Exception {

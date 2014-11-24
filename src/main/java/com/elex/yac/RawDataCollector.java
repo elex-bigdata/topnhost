@@ -41,8 +41,7 @@ public class RawDataCollector extends Configured implements Tool {
 		ToolRunner.run(new Configuration(), new RawDataCollector(), args);
 	}
 
-	public int run(String[] args) throws Exception {
-		byte urlType = 1;		
+	public int run(String[] args) throws Exception {		
 		Configuration conf = new Configuration();
 		FileSystem fs = FileSystem.get(conf);
 		Job job = Job.getInstance(conf,"raw-data-collector");
@@ -52,8 +51,8 @@ public class RawDataCollector extends Configured implements Tool {
  
 	    List<Scan> scans = new ArrayList<Scan>(); 
 	    Scan uaScan = new Scan();
-	    uaScan.setStartRow(Bytes.add(Bytes.toBytes(urlType), Bytes.toBytes(before)));
-	    uaScan.setStopRow(Bytes.add(Bytes.toBytes(urlType), Bytes.toBytes(now)));
+	    uaScan.setStartRow(Bytes.add(new byte[]{1}, Bytes.toBytes(before)));
+	    uaScan.setStopRow(Bytes.add(new byte[]{1}, Bytes.toBytes(now)));
 	    uaScan.setCaching(1000);
 	    uaScan.setAttribute(Scan.SCAN_ATTRIBUTES_TABLE_NAME, Bytes.toBytes("yac_user_action"));
 	    uaScan.addColumn(Bytes.toBytes("ua"), Bytes.toBytes("nt"));
