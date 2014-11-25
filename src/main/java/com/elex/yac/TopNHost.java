@@ -99,6 +99,7 @@ public class TopNHost extends Configured implements Tool {
 		@Override
 		protected void reduce(Text key, Iterable<Text> values,Context context)
 				throws IOException, InterruptedException {
+			list.clear();
 			nation = key.toString();
 			for(Text v:values){
 				kv = v.toString().split(",");
