@@ -14,6 +14,7 @@ import org.apache.hadoop.hbase.util.Pair;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobPriority;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -36,7 +37,7 @@ public class TopNHost extends Configured implements Tool {
 			System.exit(1);
 		}
 				
-		//ToolRunner.run(new Configuration(), new RawDataCollector(), args);
+		ToolRunner.run(new Configuration(), new RawDataCollector(), args);
 		ToolRunner.run(new Configuration(), new TopNHost(), args);
 	}
 
@@ -60,7 +61,7 @@ public class TopNHost extends Configured implements Tool {
 		FileInputFormat.addInputPath(job, in);
 		
 		job.setOutputFormatClass(TextOutputFormat.class);
-
+		job.setPriority(JobPriority.LOW);
 		MultipleOutputs.addNamedOutput(job, "nation", TextOutputFormat.class, Text.class, Text.class);
 		
 		String output = "/yac/ton_host/topN";

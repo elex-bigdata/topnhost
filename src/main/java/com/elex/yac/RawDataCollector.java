@@ -22,6 +22,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobPriority;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
@@ -65,6 +66,7 @@ public class RawDataCollector extends Configured implements Tool {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 		job.setNumReduceTasks(Integer.parseInt(Long.toString(days))*5);
+		job.setPriority(JobPriority.LOW);
 		
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 		String output = "/yac/ton_host/raw";
