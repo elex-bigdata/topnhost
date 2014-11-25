@@ -36,7 +36,7 @@ public class TopNHost extends Configured implements Tool {
 			System.exit(1);
 		}
 				
-		ToolRunner.run(new Configuration(), new RawDataCollector(), args);
+		//ToolRunner.run(new Configuration(), new RawDataCollector(), args);
 		ToolRunner.run(new Configuration(), new TopNHost(), args);
 	}
 
@@ -80,8 +80,6 @@ public class TopNHost extends Configured implements Tool {
 			nation_host = key.toString().split(",");
 			if(nation_host.length==2){
 				context.write(new Text(nation_host[0]), new Text(nation_host[1]+","+Integer.toString(value.get())));
-			}else{							
-				System.err.println(key.toString());
 			}
 		}
 		
@@ -99,8 +97,8 @@ public class TopNHost extends Configured implements Tool {
 			
 			topN = context.getConfiguration().getInt("topN", 100);
 			grep = context.getConfiguration().getInt("grep", 1);
-			System.out.println("topN:"+topN);
-			System.out.println("grep:"+grep);
+			//System.out.println("topN:"+topN);
+			//System.out.println("grep:"+grep);
 		}
 
 		@Override
@@ -111,13 +109,14 @@ public class TopNHost extends Configured implements Tool {
 			for(Text v:values){
 				kv = v.toString().split(",");
 				count = Integer.parseInt(kv[1]);
-				System.out.println("count:"+count+";kv1:"+kv[1]);
+				//System.out.println("count:"+count+";kv1:"+kv[1]);
 				if(count > grep){
 					list.add(new Pair<String,Integer>(kv[0],count));
 				}
 			}
 			
-			System.out.println("list.size:"+list.size());
+			System.out.println("before sort list.size:"+list.size());
+			
 			Collections.sort(list, new Comparator<Pair<String,Integer>>() {
 	            //降序排序
 				@Override
@@ -126,9 +125,10 @@ public class TopNHost extends Configured implements Tool {
 	                return o2.getSecond().compareTo(o1.getSecond());
 	            }	            
 	        });
-			
+						
 			topN=list.size()>topN?topN:list.size();
-			System.out.println(nation+"topN:"+topN);
+			
+			System.out.println(nation+"_topN:"+topN+";after sorted list.size:"+list.size());
 			if(topN>0){
 				nt.write("nation", new Text(nation), null);
 				for(int i=0;i<topN;i++){
