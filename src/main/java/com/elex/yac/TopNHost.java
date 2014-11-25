@@ -77,7 +77,7 @@ public class TopNHost extends Configured implements Tool {
 				throws IOException, InterruptedException {
 			nation_host = key.toString().split(",");
 			if(nation_host.length==2){
-				context.write(new Text(nation_host[0]), new Text(nation_host[1]+Integer.toString(value.get())));
+				context.write(new Text(nation_host[0]), new Text(nation_host[1]+","+Integer.toString(value.get())));
 			}							
 		}
 		
