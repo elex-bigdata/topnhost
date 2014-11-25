@@ -80,7 +80,9 @@ public class TopNHost extends Configured implements Tool {
 			nation_host = key.toString().split(",");
 			if(nation_host.length==2){
 				context.write(new Text(nation_host[0]), new Text(nation_host[1]+","+Integer.toString(value.get())));
-			}							
+			}else{							
+				System.err.println(key.toString());
+			}
 		}
 		
 	}
@@ -109,12 +111,13 @@ public class TopNHost extends Configured implements Tool {
 			for(Text v:values){
 				kv = v.toString().split(",");
 				count = Integer.parseInt(kv[1]);
-				//System.out.println("count:"+count);
+				System.out.println("count:"+count+";kv1:"+kv[1]);
 				if(count > grep){
 					list.add(new Pair<String,Integer>(kv[0],count));
 				}
 			}
 			
+			System.out.println("list.size:"+list.size());
 			Collections.sort(list, new Comparator<Pair<String,Integer>>() {
 	            //降序排序
 				@Override
