@@ -3,12 +3,9 @@ package com.elex.yac;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
@@ -42,13 +39,14 @@ public class RawDataCollector extends Configured implements Tool {
 		ToolRunner.run(new Configuration(), new RawDataCollector(), args);
 	}
 
-	public int run(String[] args) throws Exception {		
+	public int run(String[] args) throws Exception {
+		long days = Long.parseLong(args[1]);
 		Configuration conf = new Configuration();
 		FileSystem fs = FileSystem.get(conf);
 		Job job = Job.getInstance(conf,"raw-data-collector");
 		job.setJarByClass(RawDataCollector.class);
 		long now = System.currentTimeMillis();
-	    long before = now - Long.valueOf(30L*24L*60L*60L*1000L);
+	    long before = now - Long.valueOf(days*24L*60L*60L*1000L);
  
 	    List<Scan> scans = new ArrayList<Scan>(); 
 	    Scan uaScan = new Scan();
@@ -108,7 +106,7 @@ public class RawDataCollector extends Configured implements Tool {
 				
 				if(host != null && nation != null){
 					val.set(getIntFromStr(uid));
-					context.write(new Text(nation.replace("", "")+","+host.replace("", "")), val);
+					context.write(new Text(nation.replace(",", "")+","+host.replace(",", "")), val);
 				}				
 								
 			}
