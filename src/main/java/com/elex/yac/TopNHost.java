@@ -31,7 +31,7 @@ public class TopNHost extends Configured implements Tool {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		if(args.length != 2){
+		if(args.length != 3){
 			System.err.println("请输入topn参数！！！");
 			System.exit(1);
 		}
@@ -43,10 +43,11 @@ public class TopNHost extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 		FileSystem fs = FileSystem.get(conf);
-		Job job = Job.getInstance(conf,"topN-host");
+		conf.setInt("topN", Integer.parseInt(args[0]));//46与47行需要再48行之前
+		conf.setInt("grep", Integer.parseInt(args[2]));//
+		Job job = Job.getInstance(conf,"topN-host");//
 		
-		conf.setInt("topN", Integer.parseInt(args[0]));
-		conf.setInt("grep", Integer.parseInt(args[2]));
+		
 		job.setJarByClass(TopNHost.class);		
 		job.setMapperClass(MyMapper.class);
 		job.setMapOutputKeyClass(Text.class);
@@ -85,7 +86,6 @@ public class TopNHost extends Configured implements Tool {
 	}
 	
 	public static class MyReducer extends Reducer<Text, Text, Text, Text> {
-		private List<Pair<String,Integer>> list = new ArrayList<Pair<String,Integer>>();
 		private String nation;
 		private String[] kv;
 		private int count,topN,grep;
@@ -104,14 +104,14 @@ public class TopNHost extends Configured implements Tool {
 		@Override
 		protected void reduce(Text key, Iterable<Text> values,Context context)
 				throws IOException, InterruptedException {
-			list.clear();
+			List<Pair<String,Integer>> list = new ArrayList<Pair<String,Integer>>();
 			nation = key.toString();
 			for(Text v:values){
 				kv = v.toString().split(",");
 				count = Integer.parseInt(kv[1]);
+				//System.out.println("count:"+count);
 				if(count > grep){
-					Pair<String,Integer> host = new Pair<String,Integer>(kv[0],count);
-					list.add(host);
+					list.add(new Pair<String,Integer>(kv[0],count));
 				}
 			}
 			
@@ -124,14 +124,15 @@ public class TopNHost extends Configured implements Tool {
 	            }	            
 	        });
 			
-			nt.write("nation", new Text(nation), null);
-			
 			topN=list.size()>topN?topN:list.size();
 			System.out.println(nation+"topN:"+topN);
-			for(int i=0;i<topN;i++){
-				context.write(null, new Text(nation+","+list.get(i).getFirst()+","+list.get(i).getSecond().toString()));
+			if(topN>0){
+				nt.write("nation", new Text(nation), null);
+				for(int i=0;i<topN;i++){
+					context.write(null, new Text(nation+","+list.get(i).getFirst()+","+list.get(i).getSecond().toString()));
+				}
 			}
-			
+															
 								
 		}
 		
