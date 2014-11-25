@@ -31,7 +31,7 @@ public class TopNHost extends Configured implements Tool {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		if(args.length != 1){
+		if(args.length != 2){
 			System.err.println("请输入topn参数！！！");
 			System.exit(1);
 		}
@@ -76,8 +76,9 @@ public class TopNHost extends Configured implements Tool {
 		protected void map(Text key, IntWritable value, Context context)
 				throws IOException, InterruptedException {
 			nation_host = key.toString().split(",");
-			
+			if(nation_host.length==2){
 				context.write(new Text(nation_host[0]), new Text(nation_host[1]+Integer.toString(value.get())));
+			}							
 		}
 		
 	}
