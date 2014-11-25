@@ -93,29 +93,24 @@ public class TopNHost extends Configured implements Tool {
 		
 		@Override
 		protected void setup(Context context) throws IOException,InterruptedException {
-			nt = new MultipleOutputs<Text, Text>(context);
-			
-			topN = context.getConfiguration().getInt("topN", 100);
+			nt = new MultipleOutputs<Text, Text>(context);						
 			grep = context.getConfiguration().getInt("grep", 1);
-			//System.out.println("topN:"+topN);
-			//System.out.println("grep:"+grep);
 		}
 
 		@Override
 		protected void reduce(Text key, Iterable<Text> values,Context context)
 				throws IOException, InterruptedException {
+			topN = context.getConfiguration().getInt("topN", 100);
 			List<Pair<String,Integer>> list = new ArrayList<Pair<String,Integer>>();
 			nation = key.toString();
 			for(Text v:values){
 				kv = v.toString().split(",");
 				count = Integer.parseInt(kv[1]);
-				//System.out.println("count:"+count+";kv1:"+kv[1]);
 				if(count > grep){
 					list.add(new Pair<String,Integer>(kv[0],count));
 				}
 			}
 			
-			System.out.println("before sort list.size:"+list.size());
 			
 			Collections.sort(list, new Comparator<Pair<String,Integer>>() {
 	            //降序排序
@@ -128,7 +123,7 @@ public class TopNHost extends Configured implements Tool {
 						
 			topN=list.size()>topN?topN:list.size();
 			
-			System.out.println(nation+"_topN:"+topN+";after sorted list.size:"+list.size());
+
 			if(topN>0){
 				nt.write("nation", new Text(nation), null);
 				for(int i=0;i<topN;i++){
