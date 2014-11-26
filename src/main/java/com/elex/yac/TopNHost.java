@@ -44,6 +44,7 @@ public class TopNHost extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 		FileSystem fs = FileSystem.get(conf);
+		conf.set("mapred.job.priority", JobPriority.LOW.toString());
 		conf.setInt("topN", Integer.parseInt(args[0]));//46与47行需要再48行之前
 		conf.setInt("grep", Integer.parseInt(args[2]));//
 		Job job = Job.getInstance(conf,"topN-host");//
@@ -61,7 +62,7 @@ public class TopNHost extends Configured implements Tool {
 		FileInputFormat.addInputPath(job, in);
 		
 		job.setOutputFormatClass(TextOutputFormat.class);
-		job.setPriority(JobPriority.LOW);
+		//job.setPriority(org.apache.hadoop.mapreduce.JobPriority.LOW);
 		MultipleOutputs.addNamedOutput(job, "nation", TextOutputFormat.class, Text.class, Text.class);
 		
 		String output = "/yac/ton_host/topN";

@@ -43,6 +43,7 @@ public class RawDataCollector extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		long days = Long.parseLong(args[1]);
 		Configuration conf = new Configuration();
+		conf.set("mapred.job.priority", JobPriority.LOW.toString());
 		FileSystem fs = FileSystem.get(conf);
 		Job job = Job.getInstance(conf,"raw-data-collector");
 		job.setJarByClass(RawDataCollector.class);
@@ -66,7 +67,7 @@ public class RawDataCollector extends Configured implements Tool {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
 		job.setNumReduceTasks(Integer.parseInt(Long.toString(days))*5);
-		job.setPriority(JobPriority.LOW);
+		//job.setPriority(JobPriority.LOW);
 		
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 		String output = "/yac/ton_host/raw";
