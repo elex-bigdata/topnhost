@@ -66,7 +66,7 @@ public class RawDataCollector extends Configured implements Tool {
 		job.setReducerClass(MyReducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
-		job.setNumReduceTasks(Integer.parseInt(Long.toString(days))*5);
+		job.setNumReduceTasks(Integer.parseInt(Long.toString(days))*2);
 		//job.setPriority(JobPriority.LOW);
 		
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
